@@ -5,8 +5,11 @@ using UnityEngine;
 public class Bullet : MonoBehaviour
 {
     public float speed = 20;
-    public GameObject cubeprefab;
-    public GameObject todestroy;
+    public GameObject particle;
+    public int particlecount;
+    public AudioSource boom;
+    public GameObject explosion;
+    
     
 
     void Start()
@@ -20,15 +23,23 @@ public class Bullet : MonoBehaviour
         transform.position += transform.forward * speed * Time.deltaTime;
        
     }
-    void OnCollisionEnter(Collision collision)
+    void OnCollisionEnter(Collision other)
     {
-        if (collision.gameObject.CompareTag("bullet"))
+        Destroy(gameObject);
+        if (other.gameObject.tag == "building")
         {
-            for (int i = 0; i < 5; i++)
+            Destroy(other.gameObject);
+            for (int i = 0; i < particlecount; i++)
             {
-                Instantiate(cubeprefab, transform.position, Quaternion.identity);
+
+                var offset = Random.insideUnitSphere * 2;
+                Instantiate(particle, transform.position, transform.rotation);
+                boom.Play();
+                explosion.SetActive(true);
+                Instantiate(explosion, transform.position, transform.rotation);
+
             }
-            Destroy(todestroy);
         }
+       
     }
 }
